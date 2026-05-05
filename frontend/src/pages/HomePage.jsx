@@ -11,11 +11,13 @@ import MessageForm from '../components/MessageForm';
 import Messages from '../components/Messages';
 import { useAuth } from '../contexts/AuthContext';
 import {
+  addMessage,
   clearChatData,
   fetchChatData,
   selectChatError,
   selectLoadingStatus,
 } from '../slices/chatSlice';
+import socket from '../socket';
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -30,6 +32,26 @@ const HomePage = () => {
   }, [dispatch, user?.token, loadingStatus]);
 
   useEffect(() => {
+    if (loadingStatus !== 'succeeded') {
+      return undefined;
+    }
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    const handleNewMessage = (message) => {
+      dispatch(addMessage(message));
+    };
+
+    socket.on('newMessage', handleNewMessage);
+
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+    };
+  }, [dispatch, loadingStatus]);
+
+  useEffect(() => {
     if (loadingStatus === 'failed' && error === 401) {
       logOut();
       dispatch(clearChatData());
@@ -37,6 +59,7 @@ const HomePage = () => {
   }, [dispatch, error, loadingStatus, logOut]);
 
   const handleLogOut = () => {
+    socket.disconnect();
     dispatch(clearChatData());
     logOut();
   };

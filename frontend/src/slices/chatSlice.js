@@ -5,13 +5,15 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const initialState = {
+const getInitialState = () => ({
   channels: [],
   messages: [],
   currentChannelId: null,
   loadingStatus: 'idle',
   error: null,
-};
+});
+
+const initialState = getInitialState();
 
 export const fetchChatData = createAsyncThunk(
   'chat/fetchChatData',
@@ -50,7 +52,16 @@ const chatSlice = createSlice({
     setCurrentChannelId: (state, { payload }) => {
       state.currentChannelId = payload;
     },
-    clearChatData: () => initialState,
+    addMessage: (state, { payload }) => {
+      const messageAlreadyExists = state.messages.some(
+        ({ id }) => id === payload.id,
+      );
+
+      if (!messageAlreadyExists) {
+        state.messages.push(payload);
+      }
+    },
+    clearChatData: () => getInitialState(),
   },
   extraReducers: (builder) => {
     builder
@@ -74,6 +85,7 @@ const chatSlice = createSlice({
 
 export const {
   setCurrentChannelId,
+  addMessage,
   clearChatData,
 } = chatSlice.actions;
 
