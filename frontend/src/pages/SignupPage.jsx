@@ -7,33 +7,53 @@ import {
   Container,
   Form as BootstrapForm,
 } from 'react-bootstrap';
-import {
-  Link,
-  useNavigate,
-} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { useAuth } from '../contexts/AuthContext';
 
 const validationSchema = yup.object().shape({
-  username: yup.string().required('Required'),
-  password: yup.string().required('Required'),
+  username: yup
+    .string()
+    .trim()
+    .required('Required')
+    .min(3, 'From 3 to 20 characters')
+    .max(20, 'From 3 to 20 characters'),
+  password: yup
+    .string()
+    .required('Required')
+    .min(6, 'At least 6 characters'),
+  confirmPassword: yup
+    .string()
+    .required('Required')
+    .oneOf([yup.ref('password')], 'Passwords must match'),
 });
 
-const LoginPage = () => {
+const SignupPage = () => {
   const navigate = useNavigate();
   const { logIn } = useAuth();
 
-  const handleSubmit = async (values, { setStatus, setSubmitting }) => {
+  const handleSubmit = async (
+    { username, password },
+    { setFieldError, setStatus, setSubmitting },
+  ) => {
     setStatus(null);
 
     try {
-      const response = await axios.post('/api/v1/login', values);
+      const response = await axios.post('/api/v1/signup', {
+        username: username.trim(),
+        password,
+      });
 
       logIn(response.data);
       navigate('/');
-    } catch {
-      setStatus('Invalid username or password');
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setFieldError('username', 'User already exists');
+      } else {
+        setStatus('Network error. Try again.');
+      }
+
       setSubmitting(false);
     }
   };
@@ -42,10 +62,14 @@ const LoginPage = () => {
     <Container className="py-5">
       <Card className="mx-auto shadow-sm" style={{ maxWidth: '420px' }}>
         <Card.Body>
-          <h1 className="h3 mb-4 text-center">Log in</h1>
+          <h1 className="h3 mb-4 text-center">Sign up</h1>
 
           <Formik
-            initialValues={{ username: '', password: '' }}
+            initialValues={{
+              username: '',
+              password: '',
+              confirmPassword: '',
+            }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
@@ -67,11 +91,11 @@ const LoginPage = () => {
                 )}
 
                 <BootstrapForm.Group className="mb-3">
-                  <BootstrapForm.Label htmlFor="username">
+                  <BootstrapForm.Label htmlFor="signup-username">
                     Username
                   </BootstrapForm.Label>
                   <BootstrapForm.Control
-                    id="username"
+                    id="signup-username"
                     name="username"
                     autoFocus
                     value={values.username}
@@ -85,12 +109,12 @@ const LoginPage = () => {
                   </BootstrapForm.Control.Feedback>
                 </BootstrapForm.Group>
 
-                <BootstrapForm.Group className="mb-4">
-                  <BootstrapForm.Label htmlFor="password">
+                <BootstrapForm.Group className="mb-3">
+                  <BootstrapForm.Label htmlFor="signup-password">
                     Password
                   </BootstrapForm.Label>
                   <BootstrapForm.Control
-                    id="password"
+                    id="signup-password"
                     name="password"
                     type="password"
                     value={values.password}
@@ -104,21 +128,35 @@ const LoginPage = () => {
                   </BootstrapForm.Control.Feedback>
                 </BootstrapForm.Group>
 
+                <BootstrapForm.Group className="mb-4">
+                  <BootstrapForm.Label htmlFor="signup-confirm-password">
+                    Confirm password
+                  </BootstrapForm.Label>
+                  <BootstrapForm.Control
+                    id="signup-confirm-password"
+                    name="confirmPassword"
+                    type="password"
+                    value={values.confirmPassword}
+                    disabled={isSubmitting}
+                    isInvalid={touched.confirmPassword && Boolean(errors.confirmPassword)}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                  <BootstrapForm.Control.Feedback type="invalid">
+                    {errors.confirmPassword}
+                  </BootstrapForm.Control.Feedback>
+                </BootstrapForm.Group>
+
                 <Button type="submit" className="w-100" disabled={isSubmitting}>
-                  {isSubmitting ? 'Logging in...' : 'Log in'}
+                  {isSubmitting ? 'Creating account...' : 'Sign up'}
                 </Button>
               </BootstrapForm>
             )}
           </Formik>
         </Card.Body>
-
-        <Card.Footer className="text-center">
-          <span>Don&apos;t have an account? </span>
-          <Link to="/signup">Sign up</Link>
-        </Card.Footer>
       </Card>
     </Container>
   );
 };
 
-export default LoginPage;
+export default SignupPage;

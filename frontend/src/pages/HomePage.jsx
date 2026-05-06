@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   Alert,
-  Button,
   Spinner,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
@@ -84,8 +83,9 @@ const HomePage = () => {
 
   useEffect(() => {
     if (loadingStatus === 'failed' && error === 401) {
-      logOut();
+      socket.disconnect();
       dispatch(clearChatData());
+      logOut();
     }
   }, [dispatch, error, loadingStatus, logOut]);
 
@@ -93,15 +93,9 @@ const HomePage = () => {
     setModalInfo(initialModalInfo);
   };
 
-  const handleLogOut = () => {
-    socket.disconnect();
-    dispatch(clearChatData());
-    logOut();
-  };
-
   if (loadingStatus === 'loading' || loadingStatus === 'idle') {
     return (
-      <div className="vh-100 d-flex justify-content-center align-items-center">
+      <div className="d-flex justify-content-center align-items-center" style={{ height: 'calc(100vh - 57px)' }}>
         <Spinner animation="border" role="status">
           <span className="visually-hidden">Loading...</span>
         </Spinner>
@@ -121,31 +115,22 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="vh-100 d-flex flex-column">
-        <header className="navbar navbar-light bg-white border-bottom px-4">
-          <span className="navbar-brand mb-0 h1">Hexlet Chat</span>
-          <Button type="button" variant="outline-danger" onClick={handleLogOut}>
-            Log out
-          </Button>
-        </header>
+      <main className="container my-4 overflow-hidden rounded shadow-sm border" style={{ height: 'calc(100vh - 105px)' }}>
+        <div className="row h-100">
+          <aside className="col-4 col-md-3 h-100 p-0">
+            <Channels
+              onAddChannel={() => setModalInfo({ type: 'adding', channel: null })}
+              onRemoveChannel={(channel) => setModalInfo({ type: 'removing', channel })}
+              onRenameChannel={(channel) => setModalInfo({ type: 'renaming', channel })}
+            />
+          </aside>
 
-        <main className="container h-100 my-4 overflow-hidden rounded shadow-sm border">
-          <div className="row h-100">
-            <aside className="col-4 col-md-3 h-100 p-0">
-              <Channels
-                onAddChannel={() => setModalInfo({ type: 'adding', channel: null })}
-                onRemoveChannel={(channel) => setModalInfo({ type: 'removing', channel })}
-                onRenameChannel={(channel) => setModalInfo({ type: 'renaming', channel })}
-              />
-            </aside>
-
-            <section className="col h-100 p-0 d-flex flex-column">
-              <Messages />
-              <MessageForm />
-            </section>
-          </div>
-        </main>
-      </div>
+          <section className="col h-100 p-0 d-flex flex-column">
+            <Messages />
+            <MessageForm />
+          </section>
+        </div>
+      </main>
 
       <AddChannelModal
         show={modalInfo.type === 'adding'}
