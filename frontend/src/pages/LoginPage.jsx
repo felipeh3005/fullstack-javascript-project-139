@@ -7,6 +7,7 @@ import {
   Container,
   Form as BootstrapForm,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import {
   Link,
   useNavigate,
@@ -15,13 +16,14 @@ import * as yup from 'yup';
 
 import { useAuth } from '../contexts/AuthContext';
 
-const validationSchema = yup.object().shape({
-  username: yup.string().required('Required'),
-  password: yup.string().required('Required'),
+const getValidationSchema = (t) => yup.object().shape({
+  username: yup.string().required(t('validation.required')),
+  password: yup.string().required(t('validation.required')),
 });
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { logIn } = useAuth();
 
   const handleSubmit = async (values, { setStatus, setSubmitting }) => {
@@ -33,7 +35,7 @@ const LoginPage = () => {
       logIn(response.data);
       navigate('/');
     } catch {
-      setStatus('Invalid username or password');
+      setStatus(t('auth.invalidCredentials'));
       setSubmitting(false);
     }
   };
@@ -42,11 +44,11 @@ const LoginPage = () => {
     <Container className="py-5">
       <Card className="mx-auto shadow-sm" style={{ maxWidth: '420px' }}>
         <Card.Body>
-          <h1 className="h3 mb-4 text-center">Log in</h1>
+          <h1 className="h3 mb-4 text-center">{t('auth.loginTitle')}</h1>
 
           <Formik
             initialValues={{ username: '', password: '' }}
-            validationSchema={validationSchema}
+            validationSchema={getValidationSchema(t)}
             onSubmit={handleSubmit}
           >
             {({
@@ -68,7 +70,7 @@ const LoginPage = () => {
 
                 <BootstrapForm.Group className="mb-3">
                   <BootstrapForm.Label htmlFor="username">
-                    Username
+                    {t('auth.username')}
                   </BootstrapForm.Label>
                   <BootstrapForm.Control
                     id="username"
@@ -87,7 +89,7 @@ const LoginPage = () => {
 
                 <BootstrapForm.Group className="mb-4">
                   <BootstrapForm.Label htmlFor="password">
-                    Password
+                    {t('auth.password')}
                   </BootstrapForm.Label>
                   <BootstrapForm.Control
                     id="password"
@@ -105,7 +107,7 @@ const LoginPage = () => {
                 </BootstrapForm.Group>
 
                 <Button type="submit" className="w-100" disabled={isSubmitting}>
-                  {isSubmitting ? 'Logging in...' : 'Log in'}
+                  {isSubmitting ? t('auth.submittingLogin') : t('auth.submitLogin')}
                 </Button>
               </BootstrapForm>
             )}
@@ -113,8 +115,8 @@ const LoginPage = () => {
         </Card.Body>
 
         <Card.Footer className="text-center">
-          <span>Don&apos;t have an account? </span>
-          <Link to="/signup">Sign up</Link>
+          <span>{t('auth.noAccount')} </span>
+          <Link to="/signup">{t('auth.signupLink')}</Link>
         </Card.Footer>
       </Card>
     </Container>

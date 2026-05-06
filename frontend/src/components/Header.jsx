@@ -3,6 +3,7 @@ import {
   Container,
   Navbar,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import {
   Link,
@@ -16,6 +17,7 @@ import socket from '../socket';
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, logOut } = useAuth();
 
   const handleLogOut = () => {
@@ -29,12 +31,12 @@ const Header = () => {
     <Navbar bg="white" className="border-bottom shadow-sm">
       <Container>
         <Navbar.Brand as={Link} to="/">
-          Chat
+          {t('app.name')}
         </Navbar.Brand>
 
         {user && (
           <Button type="button" variant="outline-danger" onClick={handleLogOut}>
-            Log out
+            {t('auth.logout')}
           </Button>
         )}
       </Container>

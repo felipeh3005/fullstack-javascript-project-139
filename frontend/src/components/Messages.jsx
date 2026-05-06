@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import {
@@ -6,6 +7,7 @@ import {
 } from '../slices/chatSlice';
 
 const Messages = () => {
+  const { t } = useTranslation();
   const currentChannel = useSelector(selectCurrentChannel);
   const messages = useSelector(selectCurrentChannelMessages) ?? [];
 
@@ -18,9 +20,7 @@ const Messages = () => {
           {currentChannel?.name ?? ''}
         </p>
         <span className="text-muted small">
-          {messages.length}
-          {' '}
-          messages
+          {t('chat.messagesCount', { count: messages.length })}
         </span>
       </div>
 

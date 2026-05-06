@@ -3,6 +3,7 @@ import {
   Alert,
   Spinner,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Channels from '../components/Channels';
@@ -33,6 +34,7 @@ const HomePage = () => {
   const [modalInfo, setModalInfo] = useState(initialModalInfo);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { user, logOut } = useAuth();
   const loadingStatus = useSelector(selectLoadingStatus);
   const error = useSelector(selectChatError);
@@ -97,7 +99,7 @@ const HomePage = () => {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: 'calc(100vh - 57px)' }}>
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden">{t('chat.loading')}</span>
         </Spinner>
       </div>
     );
@@ -107,7 +109,7 @@ const HomePage = () => {
     return (
       <div className="container py-5">
         <Alert variant="danger">
-          Could not load chat data.
+          {t('chat.loadError')}
         </Alert>
       </div>
     );

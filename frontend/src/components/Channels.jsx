@@ -3,6 +3,7 @@ import {
   ButtonGroup,
   Dropdown,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -17,6 +18,7 @@ const Channels = ({
   onRenameChannel,
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const channels = useSelector(selectChannels) ?? [];
   const currentChannelId = useSelector(selectCurrentChannelId);
 
@@ -27,12 +29,12 @@ const Channels = ({
   return (
     <div className="h-100 d-flex flex-column bg-light border-end">
       <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
-        <span className="fw-bold">Channels</span>
+        <span className="fw-bold">{t('chat.channels')}</span>
         <Button
           type="button"
           size="sm"
           variant="outline-primary"
-          aria-label="Add channel"
+          aria-label={t('chat.addChannel')}
           onClick={onAddChannel}
         >
           +
@@ -57,7 +59,7 @@ const Channels = ({
                   variant={buttonVariant}
                   className="text-start text-truncate flex-grow-1 border-0"
                   title={channelName}
-                  aria-label={`Select channel ${channel.name}`}
+                  aria-label={t('chat.selectChannel', { name: channel.name })}
                   onClick={() => handleChannelClick(channel.id)}
                 >
                   <span className="text-truncate d-block">
@@ -70,15 +72,15 @@ const Channels = ({
                   variant={buttonVariant}
                   className="flex-grow-0 border-0"
                   id={`channel-controls-${channel.id}`}
-                  aria-label={`Controls for channel ${channel.name}`}
+                  aria-label={t('chat.channelControls', { name: channel.name })}
                 />
 
                 <Dropdown.Menu>
                   <Dropdown.Item onClick={() => onRenameChannel(channel)}>
-                    Rename
+                    {t('chat.rename')}
                   </Dropdown.Item>
                   <Dropdown.Item onClick={() => onRemoveChannel(channel)}>
-                    Remove
+                    {t('chat.remove')}
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
@@ -92,7 +94,7 @@ const Channels = ({
               variant={buttonVariant}
               className="w-100 text-start text-truncate mb-1 border-0"
               title={channelName}
-              aria-label={`Select channel ${channel.name}`}
+              aria-label={t('chat.selectChannel', { name: channel.name })}
               onClick={() => handleChannelClick(channel.id)}
             >
               {channelName}

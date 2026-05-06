@@ -5,6 +5,7 @@ import {
   Form,
   InputGroup,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -17,10 +18,11 @@ const MESSAGE_SEND_TIMEOUT = 7000;
 
 const MessageForm = () => {
   const [body, setBody] = useState('');
+  const [hasError, setHasError] = useState(false);
   const [sendingStatus, setSendingStatus] = useState('idle');
-  const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const currentChannelId = useSelector(selectCurrentChannelId);
   const { user } = useAuth();
 
@@ -42,7 +44,7 @@ const MessageForm = () => {
     };
 
     setSendingStatus('sending');
-    setError(null);
+    setHasError(false);
 
     try {
       const response = await axios.post('/api/v1/messages', message, {
@@ -57,7 +59,7 @@ const MessageForm = () => {
       setSendingStatus('idle');
     } catch {
       setSendingStatus('failed');
-      setError('Message was not sent. Check your connection.');
+      setHasError(true);
     }
   };
 
@@ -66,20 +68,20 @@ const MessageForm = () => {
       <InputGroup>
         <Form.Control
           name="body"
-          aria-label="New message"
-          placeholder="Enter message..."
+          aria-label={t('messageForm.newMessage')}
+          placeholder={t('messageForm.placeholder')}
           value={body}
           disabled={isSending}
           onChange={(event) => setBody(event.target.value)}
         />
         <Button type="submit" disabled={!body.trim() || isSending}>
-          {isSending ? 'Sending...' : 'Send'}
+          {isSending ? t('messageForm.sending') : t('messageForm.send')}
         </Button>
       </InputGroup>
 
-      {error && (
+      {hasError && (
         <div className="text-danger small mt-2">
-          {error}
+          {t('messageForm.sendError')}
         </div>
       )}
     </Form>

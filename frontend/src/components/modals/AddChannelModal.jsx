@@ -5,6 +5,7 @@ import {
   Form as BootstrapForm,
   Modal,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 
@@ -15,17 +16,17 @@ import {
   setCurrentChannelId,
 } from '../../slices/chatSlice';
 
-const getValidationSchema = (channels) => {
+const getValidationSchema = (channels, t) => {
   const channelNames = channels.map(({ name }) => name.toLowerCase());
 
   return yup.object().shape({
     name: yup
       .string()
       .trim()
-      .required('Required')
-      .min(3, 'From 3 to 20 characters')
-      .max(20, 'From 3 to 20 characters')
-      .test('unique', 'Must be unique', (value) => {
+      .required(t('validation.required'))
+      .min(3, t('validation.usernameLength'))
+      .max(20, t('validation.usernameLength'))
+      .test('unique', t('validation.unique'), (value) => {
         if (!value) {
           return true;
         }
@@ -37,6 +38,7 @@ const getValidationSchema = (channels) => {
 
 const AddChannelModal = ({ show, onHide }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const channels = useSelector(selectChannels) ?? [];
   const { user } = useAuth();
 
@@ -62,7 +64,7 @@ const AddChannelModal = ({ show, onHide }) => {
       dispatch(setCurrentChannelId(response.data.id));
       onHide();
     } catch {
-      setFieldError('name', 'Network error');
+      setFieldError('name', t('validation.networkError'));
       setSubmitting(false);
     }
   };
@@ -70,7 +72,7 @@ const AddChannelModal = ({ show, onHide }) => {
   return (
     <Formik
       initialValues={{ name: '' }}
-      validationSchema={getValidationSchema(channels)}
+      validationSchema={getValidationSchema(channels, t)}
       onSubmit={handleSubmit}
     >
       {({
@@ -91,13 +93,13 @@ const AddChannelModal = ({ show, onHide }) => {
         >
           <BootstrapForm noValidate onSubmit={submitForm}>
             <Modal.Header closeButton={!isSubmitting}>
-              <Modal.Title>Add channel</Modal.Title>
+              <Modal.Title>{t('modals.addChannel.title')}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
               <BootstrapForm.Group>
                 <BootstrapForm.Label htmlFor="add-channel-name">
-                  Channel name
+                  {t('modals.addChannel.label')}
                 </BootstrapForm.Label>
                 <BootstrapForm.Control
                   id="add-channel-name"
@@ -122,10 +124,10 @@ const AddChannelModal = ({ show, onHide }) => {
                 disabled={isSubmitting}
                 onClick={onHide}
               >
-                Cancel
+                {t('modals.addChannel.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating...' : 'Create'}
+                {isSubmitting ? t('modals.addChannel.submitting') : t('modals.addChannel.submit')}
               </Button>
             </Modal.Footer>
           </BootstrapForm>

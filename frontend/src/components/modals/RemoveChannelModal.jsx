@@ -4,6 +4,7 @@ import {
   Button,
   Modal,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { useAuth } from '../../contexts/AuthContext';
@@ -13,6 +14,7 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   if (!show || !channel) {
@@ -30,6 +32,7 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
       });
 
       dispatch(removeChannel({ id: channel.id }));
+      setIsSubmitting(false);
       onHide();
     } catch {
       setIsSubmitting(false);
@@ -45,19 +48,12 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
       keyboard={!isSubmitting}
     >
       <Modal.Header closeButton={!isSubmitting}>
-        <Modal.Title>Remove channel</Modal.Title>
+        <Modal.Title>{t('modals.removeChannel.title')}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <p className="mb-0">
-          Remove channel
-          {' '}
-          <b>
-            #
-            {' '}
-            {channel.name}
-          </b>
-          ?
+          {t('modals.removeChannel.body', { name: channel.name })}
         </p>
       </Modal.Body>
 
@@ -68,7 +64,7 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
           disabled={isSubmitting}
           onClick={onHide}
         >
-          Cancel
+          {t('modals.removeChannel.cancel')}
         </Button>
         <Button
           type="button"
@@ -76,7 +72,7 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
           disabled={isSubmitting}
           onClick={handleRemove}
         >
-          {isSubmitting ? 'Removing...' : 'Remove'}
+          {isSubmitting ? t('modals.removeChannel.submitting') : t('modals.removeChannel.submit')}
         </Button>
       </Modal.Footer>
     </Modal>

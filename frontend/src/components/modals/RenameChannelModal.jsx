@@ -5,6 +5,7 @@ import {
   Form as BootstrapForm,
   Modal,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 
@@ -14,7 +15,7 @@ import {
   selectChannels,
 } from '../../slices/chatSlice';
 
-const getValidationSchema = (channels, currentChannel) => {
+const getValidationSchema = (channels, currentChannel, t) => {
   const channelNames = channels
     .filter(({ id }) => String(id) !== String(currentChannel.id))
     .map(({ name }) => name.toLowerCase());
@@ -23,10 +24,10 @@ const getValidationSchema = (channels, currentChannel) => {
     name: yup
       .string()
       .trim()
-      .required('Required')
-      .min(3, 'From 3 to 20 characters')
-      .max(20, 'From 3 to 20 characters')
-      .test('unique', 'Must be unique', (value) => {
+      .required(t('validation.required'))
+      .min(3, t('validation.usernameLength'))
+      .max(20, t('validation.usernameLength'))
+      .test('unique', t('validation.unique'), (value) => {
         if (!value) {
           return true;
         }
@@ -38,6 +39,7 @@ const getValidationSchema = (channels, currentChannel) => {
 
 const RenameChannelModal = ({ show, channel, onHide }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const channels = useSelector(selectChannels) ?? [];
   const { user } = useAuth();
 
@@ -62,7 +64,7 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
       dispatch(renameChannel(response.data ?? { ...channel, name }));
       onHide();
     } catch {
-      setFieldError('name', 'Network error');
+      setFieldError('name', t('validation.networkError'));
       setSubmitting(false);
     }
   };
@@ -70,7 +72,7 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
   return (
     <Formik
       initialValues={{ name: channel.name }}
-      validationSchema={getValidationSchema(channels, channel)}
+      validationSchema={getValidationSchema(channels, channel, t)}
       onSubmit={handleSubmit}
     >
       {({
@@ -91,13 +93,13 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
         >
           <BootstrapForm noValidate onSubmit={submitForm}>
             <Modal.Header closeButton={!isSubmitting}>
-              <Modal.Title>Rename channel</Modal.Title>
+              <Modal.Title>{t('modals.renameChannel.title')}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
               <BootstrapForm.Group>
                 <BootstrapForm.Label htmlFor="rename-channel-name">
-                  Channel name
+                  {t('modals.renameChannel.label')}
                 </BootstrapForm.Label>
                 <BootstrapForm.Control
                   id="rename-channel-name"
@@ -122,10 +124,10 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
                 disabled={isSubmitting}
                 onClick={onHide}
               >
-                Cancel
+                {t('modals.renameChannel.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save'}
+                {isSubmitting ? t('modals.renameChannel.submitting') : t('modals.renameChannel.submit')}
               </Button>
             </Modal.Footer>
           </BootstrapForm>
