@@ -1,6 +1,7 @@
 import {
   Button,
-  ListGroup,
+  ButtonGroup,
+  Dropdown,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,36 +11,95 @@ import {
   setCurrentChannelId,
 } from '../slices/chatSlice';
 
-const Channels = () => {
+const Channels = ({
+  onAddChannel,
+  onRemoveChannel,
+  onRenameChannel,
+}) => {
   const dispatch = useDispatch();
   const channels = useSelector(selectChannels) ?? [];
   const currentChannelId = useSelector(selectCurrentChannelId);
 
+  const handleChannelClick = (channelId) => {
+    dispatch(setCurrentChannelId(channelId));
+  };
+
   return (
-    <div className="h-100 border-end bg-light">
-      <div className="p-3 border-bottom">
-        <b>Channels</b>
+    <div className="h-100 d-flex flex-column bg-light border-end">
+      <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <span className="fw-bold">Channels</span>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline-primary"
+          aria-label="Add channel"
+          onClick={onAddChannel}
+        >
+          +
+        </Button>
       </div>
 
-      <ListGroup variant="flush">
+      <nav className="overflow-auto px-2 py-2">
         {channels.map((channel) => {
-          const active = channel.id === currentChannelId;
+          const isActive = String(channel.id) === String(currentChannelId);
+          const channelName = `# ${channel.name}`;
+          const buttonVariant = isActive ? 'secondary' : 'light';
+
+          if (channel.removable) {
+            return (
+              <Dropdown
+                as={ButtonGroup}
+                className="d-flex w-100 mb-1"
+                key={channel.id}
+              >
+                <Button
+                  type="button"
+                  variant={buttonVariant}
+                  className="text-start text-truncate flex-grow-1 border-0"
+                  title={channelName}
+                  aria-label={`Select channel ${channel.name}`}
+                  onClick={() => handleChannelClick(channel.id)}
+                >
+                  <span className="text-truncate d-block">
+                    {channelName}
+                  </span>
+                </Button>
+
+                <Dropdown.Toggle
+                  split
+                  variant={buttonVariant}
+                  className="flex-grow-0 border-0"
+                  id={`channel-controls-${channel.id}`}
+                  aria-label={`Controls for channel ${channel.name}`}
+                />
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => onRenameChannel(channel)}>
+                    Rename
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => onRemoveChannel(channel)}>
+                    Remove
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            );
+          }
 
           return (
-            <ListGroup.Item key={channel.id} className="p-0 border-0">
-              <Button
-                type="button"
-                variant={active ? 'secondary' : 'light'}
-                className="w-100 rounded-0 text-start"
-                onClick={() => dispatch(setCurrentChannelId(channel.id))}
-              >
-                <span className="me-1">#</span>
-                {channel.name}
-              </Button>
-            </ListGroup.Item>
+            <Button
+              key={channel.id}
+              type="button"
+              variant={buttonVariant}
+              className="w-100 text-start text-truncate mb-1 border-0"
+              title={channelName}
+              aria-label={`Select channel ${channel.name}`}
+              onClick={() => handleChannelClick(channel.id)}
+            >
+              {channelName}
+            </Button>
           );
         })}
-      </ListGroup>
+      </nav>
     </div>
   );
 };

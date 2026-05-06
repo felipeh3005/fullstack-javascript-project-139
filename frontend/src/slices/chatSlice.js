@@ -5,6 +5,10 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const getDefaultChannelId = (channels) => (
+  channels.find(({ name }) => name === 'general')?.id ?? channels[0]?.id ?? null
+);
+
 const getInitialState = () => ({
   channels: [],
   messages: [],
@@ -32,12 +36,11 @@ export const fetchChatData = createAsyncThunk(
 
       const channels = channelsResponse.data;
       const messages = messagesResponse.data;
-      const currentChannelId = channels[0]?.id ?? null;
 
       return {
         channels,
         messages,
-        currentChannelId,
+        currentChannelId: getDefaultChannelId(channels),
       };
     } catch (error) {
       return rejectWithValue(error.response?.status ?? 'network');
@@ -53,12 +56,61 @@ const chatSlice = createSlice({
       state.currentChannelId = payload;
     },
     addMessage: (state, { payload }) => {
+      if (!payload?.id) {
+        return;
+      }
+
       const messageAlreadyExists = state.messages.some(
-        ({ id }) => id === payload.id,
+        ({ id }) => String(id) === String(payload.id),
       );
 
       if (!messageAlreadyExists) {
         state.messages.push(payload);
+      }
+    },
+    addChannel: (state, { payload }) => {
+      if (!payload?.id) {
+        return;
+      }
+
+      const channelAlreadyExists = state.channels.some(
+        ({ id }) => String(id) === String(payload.id),
+      );
+
+      if (!channelAlreadyExists) {
+        state.channels.push(payload);
+      }
+    },
+    removeChannel: (state, { payload }) => {
+      const removedChannelId = payload?.id;
+
+      if (!removedChannelId) {
+        return;
+      }
+
+      state.channels = state.channels.filter(
+        ({ id }) => String(id) !== String(removedChannelId),
+      );
+
+      state.messages = state.messages.filter(
+        ({ channelId }) => String(channelId) !== String(removedChannelId),
+      );
+
+      if (String(state.currentChannelId) === String(removedChannelId)) {
+        state.currentChannelId = getDefaultChannelId(state.channels);
+      }
+    },
+    renameChannel: (state, { payload }) => {
+      if (!payload?.id) {
+        return;
+      }
+
+      const channel = state.channels.find(
+        ({ id }) => String(id) === String(payload.id),
+      );
+
+      if (channel) {
+        channel.name = payload.name;
       }
     },
     clearChatData: () => getInitialState(),
@@ -86,6 +138,9 @@ const chatSlice = createSlice({
 export const {
   setCurrentChannelId,
   addMessage,
+  addChannel,
+  removeChannel,
+  renameChannel,
   clearChatData,
 } = chatSlice.actions;
 
@@ -98,15 +153,21 @@ export const selectChatError = (state) => state.chat.error;
 export const selectCurrentChannel = createSelector(
   [selectChannels, selectCurrentChannelId],
   (channels, currentChannelId) => (
-    channels.find((channel) => channel.id === currentChannelId) ?? null
+    channels.find(({ id }) => String(id) === String(currentChannelId)) ?? null
   ),
 );
 
 export const selectCurrentChannelMessages = createSelector(
   [selectMessages, selectCurrentChannelId],
-  (messages, currentChannelId) => (
-    messages.filter((message) => message.channelId === currentChannelId)
-  ),
+  (messages, currentChannelId) => {
+    if (currentChannelId === null || currentChannelId === undefined) {
+      return [];
+    }
+
+    return messages.filter(
+      ({ channelId }) => String(channelId) === String(currentChannelId),
+    );
+  },
 );
 
 export default chatSlice.reducer;

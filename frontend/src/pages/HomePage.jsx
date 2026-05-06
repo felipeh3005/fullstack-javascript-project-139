@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
@@ -9,17 +9,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import Channels from '../components/Channels';
 import MessageForm from '../components/MessageForm';
 import Messages from '../components/Messages';
+import AddChannelModal from '../components/modals/AddChannelModal';
+import RemoveChannelModal from '../components/modals/RemoveChannelModal';
+import RenameChannelModal from '../components/modals/RenameChannelModal';
 import { useAuth } from '../contexts/AuthContext';
 import {
+  addChannel,
   addMessage,
   clearChatData,
   fetchChatData,
+  removeChannel,
+  renameChannel,
   selectChatError,
   selectLoadingStatus,
 } from '../slices/chatSlice';
 import socket from '../socket';
 
+const initialModalInfo = {
+  type: null,
+  channel: null,
+};
+
 const HomePage = () => {
+  const [modalInfo, setModalInfo] = useState(initialModalInfo);
+
   const dispatch = useDispatch();
   const { user, logOut } = useAuth();
   const loadingStatus = useSelector(selectLoadingStatus);
@@ -44,10 +57,28 @@ const HomePage = () => {
       dispatch(addMessage(message));
     };
 
+    const handleNewChannel = (channel) => {
+      dispatch(addChannel(channel));
+    };
+
+    const handleRemoveChannel = (channel) => {
+      dispatch(removeChannel(channel));
+    };
+
+    const handleRenameChannel = (channel) => {
+      dispatch(renameChannel(channel));
+    };
+
     socket.on('newMessage', handleNewMessage);
+    socket.on('newChannel', handleNewChannel);
+    socket.on('removeChannel', handleRemoveChannel);
+    socket.on('renameChannel', handleRenameChannel);
 
     return () => {
       socket.off('newMessage', handleNewMessage);
+      socket.off('newChannel', handleNewChannel);
+      socket.off('removeChannel', handleRemoveChannel);
+      socket.off('renameChannel', handleRenameChannel);
     };
   }, [dispatch, loadingStatus]);
 
@@ -57,6 +88,10 @@ const HomePage = () => {
       dispatch(clearChatData());
     }
   }, [dispatch, error, loadingStatus, logOut]);
+
+  const closeModal = () => {
+    setModalInfo(initialModalInfo);
+  };
 
   const handleLogOut = () => {
     socket.disconnect();
@@ -85,27 +120,50 @@ const HomePage = () => {
   }
 
   return (
-    <div className="vh-100 d-flex flex-column">
-      <header className="navbar navbar-light bg-white border-bottom px-4">
-        <span className="navbar-brand mb-0 h1">Hexlet Chat</span>
-        <Button type="button" variant="outline-danger" onClick={handleLogOut}>
-          Log out
-        </Button>
-      </header>
+    <>
+      <div className="vh-100 d-flex flex-column">
+        <header className="navbar navbar-light bg-white border-bottom px-4">
+          <span className="navbar-brand mb-0 h1">Hexlet Chat</span>
+          <Button type="button" variant="outline-danger" onClick={handleLogOut}>
+            Log out
+          </Button>
+        </header>
 
-      <main className="container h-100 my-4 overflow-hidden rounded shadow-sm border">
-        <div className="row h-100">
-          <aside className="col-4 col-md-3 h-100 p-0">
-            <Channels />
-          </aside>
+        <main className="container h-100 my-4 overflow-hidden rounded shadow-sm border">
+          <div className="row h-100">
+            <aside className="col-4 col-md-3 h-100 p-0">
+              <Channels
+                onAddChannel={() => setModalInfo({ type: 'adding', channel: null })}
+                onRemoveChannel={(channel) => setModalInfo({ type: 'removing', channel })}
+                onRenameChannel={(channel) => setModalInfo({ type: 'renaming', channel })}
+              />
+            </aside>
 
-          <section className="col h-100 p-0 d-flex flex-column">
-            <Messages />
-            <MessageForm />
-          </section>
-        </div>
-      </main>
-    </div>
+            <section className="col h-100 p-0 d-flex flex-column">
+              <Messages />
+              <MessageForm />
+            </section>
+          </div>
+        </main>
+      </div>
+
+      <AddChannelModal
+        show={modalInfo.type === 'adding'}
+        onHide={closeModal}
+      />
+
+      <RenameChannelModal
+        show={modalInfo.type === 'renaming'}
+        channel={modalInfo.channel}
+        onHide={closeModal}
+      />
+
+      <RemoveChannelModal
+        show={modalInfo.type === 'removing'}
+        channel={modalInfo.channel}
+        onHide={closeModal}
+      />
+    </>
   );
 };
 
