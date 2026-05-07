@@ -12,6 +12,7 @@
     "axios": "^1.16.0",
     "bootstrap": "^5.3.8",
     "formik": "^2.4.9",
+    "fullstack-javascript-project-139": "file:..",
     "i18next": "23.6.0",
     "leo-profanity": "^1.9.0",
     "react": "^19.2.5",
