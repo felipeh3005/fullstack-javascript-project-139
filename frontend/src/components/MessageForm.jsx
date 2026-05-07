@@ -13,6 +13,7 @@ import {
   addMessage,
   selectCurrentChannelId,
 } from '../slices/chatSlice';
+import cleanProfanity from '../utils/profanityFilter';
 
 const MESSAGE_SEND_TIMEOUT = 7000;
 
@@ -38,7 +39,7 @@ const MessageForm = () => {
     }
 
     const message = {
-      body: trimmedBody,
+      body: cleanProfanity(trimmedBody),
       channelId: currentChannelId,
       username: user.username,
     };

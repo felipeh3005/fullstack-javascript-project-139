@@ -16,9 +16,12 @@ import {
   selectChannels,
   setCurrentChannelId,
 } from '../../slices/chatSlice';
+import cleanProfanity from '../../utils/profanityFilter';
 
 const getValidationSchema = (channels, t) => {
-  const channelNames = channels.map(({ name }) => name.toLowerCase());
+  const channelNames = channels.map(({ name }) => (
+    cleanProfanity(name).toLowerCase()
+  ));
 
   return yup.object().shape({
     name: yup
@@ -32,7 +35,9 @@ const getValidationSchema = (channels, t) => {
           return true;
         }
 
-        return !channelNames.includes(value.trim().toLowerCase());
+        const cleanedName = cleanProfanity(value.trim()).toLowerCase();
+
+        return !channelNames.includes(cleanedName);
       }),
   });
 };
@@ -48,7 +53,7 @@ const AddChannelModal = ({ show, onHide }) => {
   }
 
   const handleSubmit = async (values, { setFieldError, setSubmitting }) => {
-    const name = values.name.trim();
+    const name = cleanProfanity(values.name.trim());
 
     try {
       const response = await axios.post(

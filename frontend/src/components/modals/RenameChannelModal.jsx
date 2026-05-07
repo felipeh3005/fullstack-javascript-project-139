@@ -15,11 +15,12 @@ import {
   renameChannel,
   selectChannels,
 } from '../../slices/chatSlice';
+import cleanProfanity from '../../utils/profanityFilter';
 
 const getValidationSchema = (channels, currentChannel, t) => {
   const channelNames = channels
     .filter(({ id }) => String(id) !== String(currentChannel.id))
-    .map(({ name }) => name.toLowerCase());
+    .map(({ name }) => cleanProfanity(name).toLowerCase());
 
   return yup.object().shape({
     name: yup
@@ -33,7 +34,9 @@ const getValidationSchema = (channels, currentChannel, t) => {
           return true;
         }
 
-        return !channelNames.includes(value.trim().toLowerCase());
+        const cleanedName = cleanProfanity(value.trim()).toLowerCase();
+
+        return !channelNames.includes(cleanedName);
       }),
   });
 };
@@ -49,7 +52,7 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
   }
 
   const handleSubmit = async (values, { setFieldError, setSubmitting }) => {
-    const name = values.name.trim();
+    const name = cleanProfanity(values.name.trim());
 
     try {
       const response = await axios.patch(
