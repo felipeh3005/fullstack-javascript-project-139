@@ -90,6 +90,10 @@ const resources = {
         channelRenamed: 'Channel renamed',
         channelRemoved: 'Channel removed',
       },
+      errors: {
+        unexpectedTitle: 'Something went wrong',
+        unexpectedDescription: 'Please reload the page or try again later.',
+      },
     },
   },
 };

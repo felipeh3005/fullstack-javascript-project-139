@@ -11,25 +11,28 @@ import App from './App';
 import i18n from './i18n';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
+import RollbarWrapper from './components/RollbarWrapper';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
-      <Provider store={store}>
-        <App />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </Provider>
+      <RollbarWrapper>
+        <Provider store={store}>
+          <App />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+        </Provider>
+      </RollbarWrapper>
     </I18nextProvider>
   </React.StrictMode>,
 );
