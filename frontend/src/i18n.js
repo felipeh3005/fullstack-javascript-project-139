@@ -9,7 +9,7 @@ const resources = {
       },
       auth: {
         loginTitle: 'Log in',
-        username: 'Username',
+        username: 'Your nickname',
         password: 'Password',
         submitLogin: 'Log in',
         submittingLogin: 'Logging in...',
