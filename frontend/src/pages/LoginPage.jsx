@@ -112,8 +112,10 @@ const LoginPage = () => {
         </Card.Body>
 
         <Card.Footer className="text-center">
-          <span>{t('auth.noAccount')} </span>
-          <a href="/signup">{t('auth.signupLink')}</a>
+          <div>{t('auth.noAccount')}</div>
+          <a href="/signup" className="d-block mt-2">
+            {t('auth.signupLink')}
+          </a>
         </Card.Footer>
       </Card>
     </Container>
