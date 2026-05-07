@@ -114,11 +114,13 @@ const LoginPage = () => {
           </Formik>
         </Card.Body>
 
-        <Card.Footer className="text-center">
-          <div className="mb-2">{t('auth.noAccount')}</div>
-          <Link to="/signup" className="btn btn-outline-primary w-100">
-            {t('auth.signupLink')}
-          </Link>
+        <Card.Footer className="p-4">
+          <div className="text-center">
+            <span>{t('auth.noAccount')} </span>
+            <Link to="/signup">
+              {t('auth.signupLink')}
+            </Link>
+          </div>
         </Card.Footer>
       </Card>
     </Container>
