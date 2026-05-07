@@ -84,6 +84,12 @@ const resources = {
         message: 'Page not found',
         link: 'Go to main page',
       },
+      notifications: {
+        dataLoadError: 'Failed to load chat data.',
+        channelCreated: 'Channel created',
+        channelRenamed: 'Channel renamed',
+        channelRemoved: 'Channel removed',
+      },
     },
   },
 };

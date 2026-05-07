@@ -7,6 +7,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 import { useAuth } from '../../contexts/AuthContext';
@@ -62,6 +63,7 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
       );
 
       dispatch(renameChannel(response.data ?? { ...channel, name }));
+      toast.success(t('notifications.channelRenamed'));
       onHide();
     } catch {
       setFieldError('name', t('validation.networkError'));
@@ -127,7 +129,9 @@ const RenameChannelModal = ({ show, channel, onHide }) => {
                 {t('modals.renameChannel.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? t('modals.renameChannel.submitting') : t('modals.renameChannel.submit')}
+                {isSubmitting
+                  ? t('modals.renameChannel.submitting')
+                  : t('modals.renameChannel.submit')}
               </Button>
             </Modal.Footer>
           </BootstrapForm>

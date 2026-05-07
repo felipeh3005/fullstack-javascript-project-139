@@ -7,6 +7,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 import { useAuth } from '../../contexts/AuthContext';
@@ -62,6 +63,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
       dispatch(addChannel(response.data));
       dispatch(setCurrentChannelId(response.data.id));
+      toast.success(t('notifications.channelCreated'));
       onHide();
     } catch {
       setFieldError('name', t('validation.networkError'));
@@ -127,7 +129,9 @@ const AddChannelModal = ({ show, onHide }) => {
                 {t('modals.addChannel.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? t('modals.addChannel.submitting') : t('modals.addChannel.submit')}
+                {isSubmitting
+                  ? t('modals.addChannel.submitting')
+                  : t('modals.addChannel.submit')}
               </Button>
             </Modal.Footer>
           </BootstrapForm>

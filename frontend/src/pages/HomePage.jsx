@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import Channels from '../components/Channels';
 import MessageForm from '../components/MessageForm';
@@ -90,6 +91,14 @@ const HomePage = () => {
       logOut();
     }
   }, [dispatch, error, loadingStatus, logOut]);
+
+  useEffect(() => {
+    if (loadingStatus === 'failed' && error !== 401) {
+      toast.error(t('notifications.dataLoadError'), {
+        toastId: 'chat-data-load-error',
+      });
+    }
+  }, [error, loadingStatus, t]);
 
   const closeModal = () => {
     setModalInfo(initialModalInfo);

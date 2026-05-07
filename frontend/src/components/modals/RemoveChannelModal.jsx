@@ -6,6 +6,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { removeChannel } from '../../slices/chatSlice';
@@ -32,6 +33,7 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
       });
 
       dispatch(removeChannel({ id: channel.id }));
+      toast.success(t('notifications.channelRemoved'));
       setIsSubmitting(false);
       onHide();
     } catch {
@@ -72,7 +74,9 @@ const RemoveChannelModal = ({ show, channel, onHide }) => {
           disabled={isSubmitting}
           onClick={handleRemove}
         >
-          {isSubmitting ? t('modals.removeChannel.submitting') : t('modals.removeChannel.submit')}
+          {isSubmitting
+            ? t('modals.removeChannel.submitting')
+            : t('modals.removeChannel.submit')}
         </Button>
       </Modal.Footer>
     </Modal>
