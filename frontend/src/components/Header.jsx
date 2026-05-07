@@ -6,7 +6,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import {
-  Link,
   useNavigate,
 } from 'react-router-dom';
 
@@ -30,7 +29,7 @@ const Header = () => {
   return (
     <Navbar bg="white" className="border-bottom shadow-sm">
       <Container>
-        <Navbar.Brand as={Link} to="/">
+        <Navbar.Brand href="/">
           {t('app.name')}
         </Navbar.Brand>
 
