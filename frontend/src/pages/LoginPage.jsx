@@ -8,10 +8,7 @@ import {
   Form as BootstrapForm,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import {
-  Link,
-  useNavigate,
-} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -116,9 +113,7 @@ const LoginPage = () => {
 
         <Card.Footer className="text-center">
           <span>{t('auth.noAccount')} </span>
-          <Link to="/signup">
-            {t('auth.signupLink')}
-          </Link>
+          <a href="/signup">{t('auth.signupLink')}</a>
         </Card.Footer>
       </Card>
     </Container>
