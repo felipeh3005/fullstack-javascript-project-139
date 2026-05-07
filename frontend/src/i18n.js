@@ -5,7 +5,7 @@ const resources = {
   en: {
     translation: {
       app: {
-        name: 'Chat',
+        name: 'Hexlet Chat',
       },
       auth: {
         loginTitle: 'Log in',
@@ -13,7 +13,7 @@ const resources = {
         password: 'Password',
         submitLogin: 'Log in',
         submittingLogin: 'Logging in...',
-        invalidCredentials: 'Invalid username or password',
+        invalidCredentials: 'Username or password are incorrect',
         noAccount: "Don't have an account?",
         signupLink: 'Sign up',
         logout: 'Log out',
@@ -26,12 +26,12 @@ const resources = {
         submit: 'Sign up',
         submitting: 'Signing up...',
         userExists: 'User already exists',
-        networkError: 'Network error. Try again.',
+        networkError: 'Network error',
       },
       validation: {
         required: 'Required',
-        usernameLength: 'From 3 to 20 characters',
-        passwordMin: 'At least 6 characters',
+        usernameLength: 'Must be from 3 to 20 characters',
+        passwordMin: 'Must be > 6 characters',
         passwordsMustMatch: 'Passwords must match',
         unique: 'Must be unique',
         networkError: 'Network error',
