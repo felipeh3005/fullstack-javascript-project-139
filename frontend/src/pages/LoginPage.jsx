@@ -8,10 +8,7 @@ import {
   Form as BootstrapForm,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import {
-  Link,
-  useNavigate,
-} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -76,6 +73,7 @@ const LoginPage = () => {
                     id="username"
                     name="username"
                     autoFocus
+                    autoComplete="username"
                     value={values.username}
                     disabled={isSubmitting}
                     isInvalid={touched.username && Boolean(errors.username)}
@@ -95,6 +93,7 @@ const LoginPage = () => {
                     id="password"
                     name="password"
                     type="password"
+                    autoComplete="current-password"
                     value={values.password}
                     disabled={isSubmitting}
                     isInvalid={touched.password && Boolean(errors.password)}
@@ -114,13 +113,11 @@ const LoginPage = () => {
           </Formik>
         </Card.Body>
 
-        <Card.Footer className="p-4">
-          <div className="text-center">
-            <span>{t('auth.noAccount')} </span>
-            <Link to="/signup">
-              {t('auth.signupLink')}
-            </Link>
-          </div>
+        <Card.Footer className="text-center">
+          <span>{t('auth.noAccount')} </span>
+          <a href="/signup">
+            {t('auth.signupLink')}
+          </a>
         </Card.Footer>
       </Card>
     </Container>
