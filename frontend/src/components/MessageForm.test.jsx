@@ -52,7 +52,7 @@ const buildState = (currentChannelId = 1) => ({
   error: null,
 });
 
-const renderWithStore = (currentChannelId = 1) => {
+const setupWithStore = (currentChannelId = 1) => {
   const store = configureStore({
     reducer: {
       chat: chatReducer,
@@ -86,7 +86,7 @@ beforeEach(() => {
 
 describe('MessageForm', () => {
   test('renders empty form with disabled submit button', () => {
-    renderWithStore();
+    setupWithStore();
 
     expect(screen.getByLabelText('New message')).toHaveValue('');
     expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
@@ -102,7 +102,7 @@ describe('MessageForm', () => {
 
     axios.post.mockResolvedValue({ data: serverMessage });
 
-    const store = renderWithStore();
+    const appStore = setupWithStore();
 
     fireEvent.change(screen.getByLabelText('New message'), {
       target: { value: '  hello world  ' },
@@ -131,11 +131,11 @@ describe('MessageForm', () => {
     await waitFor(() => {
       expect(screen.getByLabelText('New message')).toHaveValue('');
     });
-    expect(store.getState().chat.messages).toEqual([serverMessage]);
+    expect(appStore.getState().chat.messages).toEqual([serverMessage]);
   });
 
   test('does not send message without current channel', () => {
-    renderWithStore(null);
+    setupWithStore(null);
 
     fireEvent.change(screen.getByLabelText('New message'), {
       target: { value: 'hello' },
@@ -150,7 +150,7 @@ describe('MessageForm', () => {
   test('shows error when message request fails', async () => {
     axios.post.mockRejectedValue(new Error('Network error'));
 
-    renderWithStore();
+    setupWithStore();
 
     fireEvent.change(screen.getByLabelText('New message'), {
       target: { value: 'hello' },

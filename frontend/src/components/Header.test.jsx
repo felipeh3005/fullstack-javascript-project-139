@@ -55,7 +55,7 @@ const chatState = {
   error: null,
 };
 
-const renderWithStore = () => {
+const setupWithStore = () => {
   const store = configureStore({
     reducer: {
       chat: chatReducer,
@@ -86,7 +86,7 @@ describe('Header', () => {
     });
     useNavigate.mockReturnValue(jest.fn());
 
-    renderWithStore();
+    setupWithStore();
 
     expect(screen.getByText('Hexlet Chat')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Log out' })).toBeNull();
@@ -105,14 +105,14 @@ describe('Header', () => {
     });
     useNavigate.mockReturnValue(navigate);
 
-    const store = renderWithStore();
+    const appStore = setupWithStore();
 
     fireEvent.click(screen.getByRole('button', { name: 'Log out' }));
 
     expect(socket.disconnect).toHaveBeenCalledTimes(1);
     expect(logOut).toHaveBeenCalledTimes(1);
     expect(navigate).toHaveBeenCalledWith('/login');
-    expect(store.getState().chat).toEqual({
+    expect(appStore.getState().chat).toEqual({
       channels: [],
       messages: [],
       currentChannelId: null,
