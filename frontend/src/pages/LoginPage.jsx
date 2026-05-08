@@ -37,6 +37,11 @@ const LoginPage = () => {
     }
   };
 
+  const handleSignupClick = (event) => {
+    event.preventDefault();
+    window.location.href = '/signup';
+  };
+
   return (
     <Container className="py-5">
       <Card className="mx-auto shadow-sm" style={{ maxWidth: '420px' }}>
@@ -111,7 +116,11 @@ const LoginPage = () => {
           </Formik>
         </Card.Body>
 
-        <a href="/signup" className="card-footer text-center d-block text-decoration-none">
+        <a
+          href="/signup"
+          className="card-footer text-center d-block text-decoration-none"
+          onClick={handleSignupClick}
+        >
           {t('auth.signupLink')}
         </a>
       </Card>
