@@ -111,12 +111,9 @@ const LoginPage = () => {
           </Formik>
         </Card.Body>
 
-        <Card.Footer className="text-center">
-          <div>{t('auth.noAccount')}</div>
-          <a href="/signup" className="d-block mt-2">
-            {t('auth.signupLink')}
-          </a>
-        </Card.Footer>
+        <a href="/signup" className="card-footer text-center d-block text-decoration-none">
+          {t('auth.signupLink')}
+        </a>
       </Card>
     </Container>
   );
