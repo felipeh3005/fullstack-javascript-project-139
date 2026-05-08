@@ -33,7 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:ci": "react-scripts test --watchAll=false",
+    "test:coverage": "react-scripts test --coverage --watchAll=false"
   },
   "eslintConfig": {
     "extends": [
@@ -53,5 +55,15 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5001"
+  "proxy": "http://localhost:5001",
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 85,
+        "branches": 75,
+        "functions": 85,
+        "lines": 85
+      }
+    }
+  }
 }
