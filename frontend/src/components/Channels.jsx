@@ -72,15 +72,19 @@ const Channels = ({
                   variant={buttonVariant}
                   className="flex-grow-0 border-0"
                   id={`channel-controls-${channel.id}`}
-                  aria-label={t('chat.channelControls', { name: channel.name })}
-                />
+                  aria-label={t('chat.channelControls')}
+                >
+                  <span className="visually-hidden">
+                    {t('chat.channelControls')}
+                  </span>
+                </Dropdown.Toggle>
 
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => onRenameChannel(channel)}>
-                    {t('chat.rename')}
-                  </Dropdown.Item>
                   <Dropdown.Item onClick={() => onRemoveChannel(channel)}>
                     {t('chat.remove')}
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => onRenameChannel(channel)}>
+                    {t('chat.rename')}
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>

@@ -40,7 +40,7 @@ const resources = {
         channels: 'Channels',
         addChannel: 'Add channel',
         selectChannel: 'Select channel {{name}}',
-        channelControls: 'Controls for channel {{name}}',
+        channelControls: 'Manage channel',
         remove: 'Remove',
         rename: 'Rename',
         messagesCount_one: '{{count}} message',
