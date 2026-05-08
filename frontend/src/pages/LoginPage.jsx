@@ -8,7 +8,7 @@ import {
   Form as BootstrapForm,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -111,10 +111,13 @@ const LoginPage = () => {
           </Formik>
         </Card.Body>
 
-        <Card.Footer className="text-center">
-          <Link to="/signup" className="text-decoration-none">
+        <Card.Footer className="p-0">
+          <a
+            href="/signup"
+            className="d-block p-3 text-center text-decoration-none"
+          >
             {t('auth.signupLink')}
-          </Link>
+          </a>
         </Card.Footer>
       </Card>
     </Container>
