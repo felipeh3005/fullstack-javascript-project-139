@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import Rollbar from 'rollbar';
 
 const accessToken = process.env.REACT_APP_ROLLBAR_ACCESS_TOKEN;
