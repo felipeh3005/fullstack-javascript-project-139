@@ -1,4 +1,4 @@
-/* eslint-env jest */
+/* eslint-disable testing-library/no-node-access */
 
 import { configureStore } from '@reduxjs/toolkit';
 import { render, screen } from '@testing-library/react';

@@ -1,3 +1,5 @@
+/* eslint-disable react/function-component-definition, react/display-name */
+/* eslint-env jest */
 /* eslint-disable global-require, react/display-name */
 import {
   act,

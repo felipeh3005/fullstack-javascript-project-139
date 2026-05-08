@@ -1,3 +1,4 @@
+/* eslint-env jest */
 import axios from 'axios';
 import {
   fireEvent,
