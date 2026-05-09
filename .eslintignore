@@ -1,0 +1,4 @@
+frontend/src/**/*.test.js
+frontend/src/**/*.test.jsx
+frontend/coverage/
+frontend/build/
