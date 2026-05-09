@@ -40,8 +40,10 @@ jobs:
         with:
           oidc: true
           files: frontend/coverage/lcov.info
+          format: lcov
           add-prefix: frontend
-          tag: frontend
+          verbose: true
+          skip-errors: false
 
       - name: Build frontend
         run: npm run build
