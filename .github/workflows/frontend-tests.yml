@@ -6,6 +6,10 @@ on:
       - '**'
   pull_request:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   frontend-tests:
     runs-on: ubuntu-latest
@@ -30,6 +34,13 @@ jobs:
 
       - name: Run tests with coverage
         run: npm run test:coverage
+
+      - name: Upload coverage to Qlty
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          oidc: true
+          files: frontend/coverage/lcov.info
+          tag: frontend
 
       - name: Build frontend
         run: npm run build
