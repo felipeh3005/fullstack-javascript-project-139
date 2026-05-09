@@ -40,6 +40,7 @@ jobs:
         with:
           oidc: true
           files: frontend/coverage/lcov.info
+          add-prefix: frontend
           tag: frontend
 
       - name: Build frontend
